@@ -1,49 +1,67 @@
-CREATE DATABASE Canto_dos_Pasteis;
+CREATE DATABASE IF NOT EXISTS Canto_dos_Pasteis;
 
 USE Canto_dos_Pasteis;
 
-CREATE TABLE Clientes (
+CREATE TABLE IF NOT EXISTS Clientes (
     cliente_id INT PRIMARY KEY AUTO_INCREMENT,
     nome_completo VARCHAR(100),
     nome_chamado VARCHAR(50),
     cpf VARCHAR(14) UNIQUE,
     data_nascimento DATE,
     telefone VARCHAR(15),
-    email VARCHAR(100),
-    endereco_id INT,
-    CONSTRAINT fk_endereco_cliente FOREIGN KEY (endereco_id) REFERENCES Enderecos(endereco_id)
+    email VARCHAR(100)
 );
 
-CREATE TABLE Enderecos (
+CREATE TABLE IF NOT EXISTS Enderecos (
     endereco_id INT PRIMARY KEY AUTO_INCREMENT,
+    cliente_id INT,
     bairro VARCHAR(50),
     rua VARCHAR(50),
     cidade VARCHAR(50),
-    estado VARCHAR(2)
+    estado VARCHAR(2),
+    CONSTRAINT fk_cliente_endereco FOREIGN KEY (cliente_id) REFERENCES Clientes(cliente_id)
 );
 
-CREATE TABLE Bebidas (
+CREATE TABLE IF NOT EXISTS Bebidas (
     bebida_id INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(50),
     preco DECIMAL(10, 2)
 );
 
-CREATE TABLE Pasteis (
+CREATE TABLE IF NOT EXISTS Pasteis (
     pastel_id INT PRIMARY KEY AUTO_INCREMENT,
     nome VARCHAR(50),
     preco DECIMAL(10, 2),
-    tamanho VARCHAR(10),
-    categoria VARCHAR(20) -- Ex: Vegano, Vegetariano, Sem Lactose
+    categoria VARCHAR(20)
 );
 
-CREATE TABLE Recheios (
+
+CREATE TABLE IF NOT EXISTS Tamanhos (
+    tamanho_id INT PRIMARY KEY AUTO_INCREMENT,
+    pasteis_id INT,
+    recheio_id INT,
+    nome VARCHAR(50),
+    tamanho VARCHAR(10)
+);
+
+CREATE TABLE IF NOT EXISTS TamanhosPasteis (
+    tamanhopasteis_id INT PRIMARY KEY AUTO_INCREMENT,
+    pastel_id INT,
+    tamanho_id INT,
+    nome VARCHAR(50),
+    CONSTRAINT fk_pasteis_tamanhopasteis FOREIGN KEY (pastel_id) REFERENCES Pasteis(pastel_id),
+    CONSTRAINT fk_tamanho_tamanhopasteis FOREIGN KEY (tamanho_id) REFERENCES Tamanhos(tamanho_id)
+);
+
+
+CREATE TABLE IF NOT EXISTS Recheios (
     recheio_id INT PRIMARY KEY AUTO_INCREMENT,
     pastel_id INT,
     nome VARCHAR(50),
     CONSTRAINT fk_pasteis FOREIGN KEY (pastel_id) REFERENCES Pasteis(pastel_id)
 );
 
-CREATE TABLE Pedidos (
+CREATE TABLE IF NOT EXISTS Pedidos (
     pedido_id INT PRIMARY KEY AUTO_INCREMENT,
     cliente_id INT,
     data_pedido DATE,
@@ -51,73 +69,73 @@ CREATE TABLE Pedidos (
     CONSTRAINT fk_clientes FOREIGN KEY (cliente_id) REFERENCES Clientes(cliente_id)
 );
 
-CREATE TABLE ItensPedido (
+CREATE TABLE IF NOT EXISTS ItensPedido (
     item_id INT PRIMARY KEY AUTO_INCREMENT,
     pedido_id INT,
     pastel_id INT,
-    quantidade INT,
     bebida_id INT,
+    quantidade INT,
     CONSTRAINT fk_bebidas_pedido FOREIGN KEY (bebida_id) REFERENCES Bebidas(bebida_id),
     CONSTRAINT fk_pedidos FOREIGN KEY (pedido_id) REFERENCES Pedidos(pedido_id),
     CONSTRAINT fk_pasteis_pedido FOREIGN KEY (pastel_id) REFERENCES Pasteis(pastel_id)
 );
 
-INSERT INTO Enderecos (bairro, cidade, estado) VALUES
-('Centro', 'Cidade A', 'SP'),
-('Bairro1', 'Cidade B', 'RJ'),
-('Bairro2', 'Cidade C', 'MG'),
-('Bairro3', 'Cidade D', 'RS'),
-('Bairro4', 'Cidade E', 'SC'),
-('Bairro5', 'Cidade F', 'PR'),
+INSERT INTO Enderecos (bairro, rua, cidade, estado) VALUES
+('Centro','Rua A' ,'Cidade A', 'SP'),
+('Bairro1','Rua B' , 'Cidade B', 'RJ'),
+('Bairro2','Rua C' , 'Cidade C', 'MG'),
+('Bairro3','Rua D' , 'Cidade D', 'RS'),
+('Bairro4','Rua E' , 'Cidade E', 'SC'),
+('Bairro5','Rua F' , 'Cidade F', 'PR'),
 ('Bairro6', 'Rua X', 'Cidade G', 'SP'),
 ('Bairro7', 'Rua Y', 'Cidade H', 'RJ'),
 ('Bairro8', 'Rua Z', 'Cidade I', 'MG');
 
 SELECT * FROM Enderecos;
 
-INSERT INTO Clientes (nome_completo, nome_chamado, cpf, data_nascimento, telefone, email, endereco_id) VALUES
-('João Silva', 'João', '123.456.789-01', '1990-01-15', '(11) 98765-4321', 'joao@email.com', 1),
-('Maria Oliveira', 'Maria', '987.654.321-02', '1985-05-20', '(21) 98765-1234', 'maria@email.com', 2),
-('Carlos Pereira', 'Carlos', '111.222.333-44', '1988-11-10', '(31) 99999-8888', 'carlos@email.com', 3),
-('Ana Pereira', 'Ana', '555.666.777-88', '1980-06-25', '(41) 98765-4321', 'ana@email.com', 4),
-('Lucas Oliveira', 'Lucas', '999.888.777-66', '1995-12-10', '(48) 99999-1234', 'lucas@email.com', 5),
-('Mariana Santos', 'Mariana', '444.333.222-11', '1982-03-18', '(51) 98765-9876', 'mariana@email.com', 6),
-('Fernanda Souza', 'Fernanda', '777.888.999-10', '1983-08-22', '(11) 98765-4321', 'fernanda@email.com', 7),
-('Gabriel Lima', 'Gabriel', '666.555.444-33', '1992-05-15', '(21) 98765-1234', 'gabriel@email.com', 8),
-('Amanda Oliveira', 'Amanda', '222.333.444-55', '1980-12-10', '(31) 99999-8888', 'amanda@email.com', 9);
+INSERT INTO Clientes (nome_completo, nome_chamado, cpf, data_nascimento, telefone, email) VALUES
+('João Silva', 'João', '123.456.789-01', '1990-01-15', '(11) 98765-4321', 'joao@email.com'),
+('Maria Oliveira', 'Maria', '987.654.321-02', '1985-05-20', '(21) 98765-1234', 'maria@email.com'),
+('Carlos Pereira', 'Carlos', '111.222.333-44', '1988-11-10', '(31) 99999-8888', 'carlos@email.com'),
+('Ana Pereira', 'Ana', '555.666.777-88', '1980-06-25', '(41) 98765-4321', 'ana@email.com'),
+('Lucas Oliveira', 'Lucas', '999.888.777-66', '1995-12-10', '(48) 99999-1234', 'lucas@email.com'),
+('Mariana Santos', 'Mariana', '444.333.222-11', '1982-03-18', '(51) 98765-9876', 'mariana@email.com'),
+('Fernanda Souza', 'Fernanda', '777.888.999-10', '1983-08-22', '(11) 98765-4321', 'fernanda@email.com'),
+('Gabriel Lima', 'Gabriel', '666.555.444-33', '1992-05-15', '(21) 98765-1234', 'gabriel@email.com'),
+('Amanda Oliveira', 'Amanda', '222.333.444-55', '2010-12-10', '(31) 99999-8888', 'amanda@email.com');
 
 SELECT * FROM Clientes;
 
 
-INSERT INTO Pasteis (nome, preco, tamanho, categoria) VALUES
-('Pastel Vegano', 8.50, 'Médio', 'Vegano'),
-('Pastel de Queijo', 5.00, 'Pequeno', 'Normal'),
-('Pastel de Bacon', 6.00, 'Grande', 'Normal'),
-('Pastel de Frango', 7.00, 'Médio', 'Normal'),
-('Pastel de Calabresa', 6.50, 'Grande', 'Normal'),
-('Pastel de Palmito', 7.50, 'Médio', 'Vegetariano'),
-('Pastel de Espinafre', 8.00, 'Grande', 'Vegetariano'),
-('Pastel de Berinjela', 7.00, 'Pequeno', 'Vegetariano'),
-('Pastel de Abóbora', 6.50, 'Médio', 'Vegano'),
-('Pastel de Lentilha', 7.00, 'Grande', 'Vegano'),
-('Pastel de Grão-de-bico', 6.50, 'Pequeno', 'Vegano');
+INSERT INTO Pasteis (nome, preco, categoria) VALUES
+('Pastel Vegano', 8.50,'Vegano'),
+('Pastel de Queijo', 5.00,'Normal'),
+('Pastel de Bacon', 6.00,'Normal'),
+('Pastel de Frango', 7.00,'Normal'),
+('Pastel de Calabresa', 6.50,'Normal'),
+('Pastel de Palmito', 7.50,'Vegetariano'),
+('Pastel de Espinafre', 8.00,'Vegetariano'),
+('Pastel de Berinjela', 7.00,'Vegetariano'),
+('Pastel de Abóbora', 6.50,'Vegano'),
+('Pastel de Lentilha', 7.00,'Vegano'),
+('Pastel de Grão-de-bico', 6.50,'Vegano');
 
 SELECT * FROM Pasteis;
 
-INSERT INTO Recheios (pastel_id, nome) VALUES
-(1, 'Recheio Vegano'),
-(2, 'Queijo'),
-(3, 'Bacon'),
-(4, 'Frango'),
-(5, 'Calabresa'),
-(6, 'Chocolate'),
-(7, 'Milho'),
-(8, 'Palmito'),
-(9, 'Espinafre'),
-(10, 'Berinjela'),
-(11, 'Abóbora'),
-(12, 'Lentilha'),
-(13, 'Grão-de-bico');
+INSERT INTO Recheios (nome) VALUES
+('Recheio Vegano'),
+('Queijo'),
+('Bacon'),
+('Frango'),
+('Calabresa'),
+('Chocolate'),
+('Milho'),
+('Palmito'),
+('Espinafre'),
+('Berinjela'),
+('Abóbora'),
+('Lentilha'),
+('Grão-de-bico');
 
 SELECT * FROM Recheios;
 
@@ -177,7 +195,7 @@ ORDER BY num_pedidos DESC;
 SELECT P.nome
 FROM Pasteis P
 JOIN Recheios R ON P.pastel_id = R.pastel_id
-WHERE R.nome = 'Bacon' AND R.nome = 'Queijo';
+WHERE R.nome = 'Bacon' OR R.nome = 'Queijo';
 
 -- consulta 4: mostrar o valor de venda total de todos os pastéis cadastrados no sistema
 SELECT SUM(P.preco) AS valor_total
@@ -197,3 +215,4 @@ FROM Pasteis P
 JOIN ItensPedido IP ON P.pastel_id = IP.pastel_id
 GROUP BY P.nome
 ORDER BY quantidade_vendas ASC;
+
