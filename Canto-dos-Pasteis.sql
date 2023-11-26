@@ -1,20 +1,31 @@
-CREATE DATABASE Canto_dos_Pasteis;
+-- Criação do banco de dados
+CREATE DATABASE IF NOT EXISTS Canto_dos_Pasteis;
 
 USE Canto_dos_Pasteis;
 
-CREATE TABLE clientes (
-    cliente_id INT PRIMARY KEY AUTO_INCREMENT,
+-- Criação da tabela de clientes
+CREATE TABLE IF NOT EXISTS clientes (
+    cliente_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nome_completo VARCHAR(100),
     nome_chamado VARCHAR(50),
     cpf VARCHAR(14) UNIQUE,
-    data_nascimento DATE,
-    telefone VARCHAR(15),
-    email VARCHAR(100)
+    data_nascimento DATE
 );
 
-CREATE TABLE enderecos (
-    endereco_id INT PRIMARY KEY AUTO_INCREMENT,
-    cliente_id INT,
+-- Criação da tabela de contatos
+CREATE TABLE IF NOT EXISTS contatos(
+	contato_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+	cliente_id INT NOT NULL,   
+    telefone1 VARCHAR(15),
+    telefone2 VARCHAR(15),    
+    email VARCHAR(40),
+    CONSTRAINT fk_cliente_contato FOREIGN KEY (cliente_id) REFERENCES clientes(cliente_id)
+);
+
+-- Criação da tabela de endereços
+CREATE TABLE IF NOT EXISTS enderecos (
+    endereco_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    cliente_id INT NOT NULL,
     bairro VARCHAR(50),
     numero VARCHAR(50),
     rua VARCHAR(50),
@@ -23,58 +34,66 @@ CREATE TABLE enderecos (
     CONSTRAINT fk_cliente_endereco FOREIGN KEY (cliente_id) REFERENCES clientes(cliente_id)
 );
 
-CREATE TABLE categorias (
-    categoria_id INT PRIMARY KEY AUTO_INCREMENT,
+-- Criação da tabela de categorias
+CREATE TABLE IF NOT EXISTS categorias (
+    categoria_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     nome VARCHAR(50)
 );
 
-CREATE TABLE produtos (   -- Pasteis, Bebidas e outros produtos
-    produto_id INT PRIMARY KEY AUTO_INCREMENT,
-    categoria_id INT,
+-- Criação da tabela de produtos
+CREATE TABLE IF NOT EXISTS produtos (   
+    produto_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    categoria_id INT NOT NULL,
     nome VARCHAR(50),
     CONSTRAINT fk_categoria_produto FOREIGN KEY (categoria_id) REFERENCES categorias(categoria_id)
 );
 
-CREATE TABLE tamanhos (  -- tamanho dos pasteis, bebidas e outros produtos
-    tamanho_id INT PRIMARY KEY AUTO_INCREMENT,
+-- Criação da tabela tamanho dos produtos
+CREATE TABLE IF NOT EXISTS tamanhos (  
+    tamanho_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     tamanho VARCHAR(100)
 );
 
-CREATE TABLE tamanhosProdutos (   
-    tamanhopasteis_id INT PRIMARY KEY AUTO_INCREMENT,
-    produto_id INT,
-    tamanho_id INT,
-    preco DECIMAL(10, 2), -- onde vai ser definido o preço pelo o tamanho dos produtos
+-- Criação da tabela onde vai ser definido o preço pelo o tamanho dos produtos 
+CREATE TABLE IF NOT EXISTS tamanhosProdutos (   
+    tamanhopasteis_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    produto_id INT NOT NULL,
+    tamanho_id INT NOT NULL,
+    preco DECIMAL(10, 2), 
     CONSTRAINT fk_produto_tamanhoproduto FOREIGN KEY (produto_id) REFERENCES produtos(produto_id),
     CONSTRAINT fk_tamanho_tamanhoproduto FOREIGN KEY (tamanho_id) REFERENCES tamanhos(tamanho_id)
 );
 
-CREATE TABLE recheios (
-    recheio_id INT PRIMARY KEY AUTO_INCREMENT,
+-- Criação da tabela dos ingredientes do recheio
+CREATE TABLE IF NOT EXISTS recheios (
+    recheio_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
     recheio VARCHAR(50)
 );
 
-CREATE TABLE recheiosProdutos(
-    recheiopasteis_id INT PRIMARY KEY AUTO_INCREMENT,
-    produto_id INT,
-    recheio_id INT,
+-- Criação da tabela do recheio
+CREATE TABLE IF NOT EXISTS recheiosProdutos(
+    recheiopasteis_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    produto_id INT NOT NULL,
+    recheio_id INT NOT NULL,
     CONSTRAINT fk_produto_recheiosproduto FOREIGN KEY (produto_id ) REFERENCES produtos(produto_id ),
     CONSTRAINT fk_recheio_recheiosproduto FOREIGN KEY (recheio_id) REFERENCES recheios(recheio_id)
 );
 
-CREATE TABLE pedidos (
-    pedido_id INT PRIMARY KEY AUTO_INCREMENT,
-    cliente_id INT,
+-- Criação da tabela pedidos
+CREATE TABLE IF NOT EXISTS pedidos (
+    pedido_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    cliente_id INT NOT NULL,
     data_pedido DATETIME DEFAULT NOW(),
     forma_pagamento ENUM('D','PIX','CC','CD') NOT NULL DEFAULT 'D',
     CONSTRAINT fk_clientes FOREIGN KEY (cliente_id) REFERENCES clientes(cliente_id)
 );
 
-CREATE TABLE itensPedidos (
-    item_id INT PRIMARY KEY AUTO_INCREMENT,
-    pedido_id INT,
-    produto_id INT,
-    quantidade INT,
+-- Criação da tabela itens do pedido
+CREATE TABLE IF NOT EXISTS itensPedidos (
+    item_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    pedido_id INT NOT NULL,
+    produto_id INT NOT NULL,
+    quantidade INT NOT NULL,
     CONSTRAINT fk_pedidos FOREIGN KEY (pedido_id) REFERENCES pedidos(pedido_id),
     CONSTRAINT fk_produto_itenspedidos FOREIGN KEY (produto_id) REFERENCES produtos(produto_id) 
 );
@@ -231,6 +250,7 @@ VALUES
 -- Inserir dados na tabela 'pedidos'
 INSERT INTO pedidos (cliente_id, forma_pagamento)
 VALUES 
+
     (1, 'PIX'),
     (2, 'CC'),
     (3, 'D'),
