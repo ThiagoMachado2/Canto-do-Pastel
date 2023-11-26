@@ -1,5 +1,6 @@
 DELIMITER //
 
+-- Função Buscar Cliente Por Nome
 CREATE FUNCTION BuscarClientePorNome(nome_cliente VARCHAR(100))
 RETURNS VARCHAR(100) DETERMINISTIC
 BEGIN
@@ -14,9 +15,13 @@ END //
 
 DELIMITER ;
 
+SELECT BuscarClientePorNome('João') AS clientes_encontrados;
+
+
 
 DELIMITER //
 
+-- Função Calcular Valor Total Pedido
 CREATE FUNCTION CalcularValorTotalPedido(pedido_id INT)
 RETURNS DECIMAL(10, 2) DETERMINISTIC
 BEGIN
@@ -40,6 +45,7 @@ DROP FUNCTION IF EXISTS obterProdutosEmPedido;
 
 DELIMITER //
 
+-- Função Obter Produtos Em Pedido
 CREATE FUNCTION obterProdutosEmPedido(idPedido INT)
 RETURNS VARCHAR(255)
 DETERMINISTIC
