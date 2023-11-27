@@ -9,18 +9,11 @@ CREATE TABLE IF NOT EXISTS clientes (
     nome_completo VARCHAR(100),
     nome_chamado VARCHAR(50),
     cpf VARCHAR(14) UNIQUE,
-    data_nascimento DATE
+    data_nascimento DATE,
+    telefone VARCHAR(15),
+    email VARCHAR(100)
 );
 
--- Criação da tabela de contatos
-CREATE TABLE IF NOT EXISTS contatos(
-	contato_id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-	cliente_id INT NOT NULL,   
-    telefone1 VARCHAR(15),
-    telefone2 VARCHAR(15),    
-    email VARCHAR(40),
-    CONSTRAINT fk_cliente_contato FOREIGN KEY (cliente_id) REFERENCES clientes(cliente_id)
-);
 
 -- Criação da tabela de endereços
 CREATE TABLE IF NOT EXISTS enderecos (
