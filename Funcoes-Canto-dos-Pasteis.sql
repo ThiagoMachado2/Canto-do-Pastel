@@ -39,8 +39,6 @@ DELIMITER ;
 
 SELECT CalcularValorTotalPedido(1) AS ValorTotalPedido;
 
-DROP FUNCTION IF EXISTS obterProdutosEmPedido;
-
 
 
 DELIMITER //
