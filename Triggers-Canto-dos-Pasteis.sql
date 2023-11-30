@@ -58,3 +58,51 @@ DELIMITER ;
 -- Este trigger atualizara os itens para novas categorias quando deletadas
 
 
+-- Atualizar Valor Total do Pedido ao Alterar Quantidade em ItensPedidos
+DELIMITER //
+CREATE TRIGGER AfterUpdateQuantidadeItensPedidos
+AFTER UPDATE ON itensPedidos
+FOR EACH ROW
+BEGIN
+    -- Atualizar o valor total do pedido ao alterar a quantidade em itensPedidos
+    UPDATE pedidos AS p
+    SET p.valor_total = (SELECT SUM(tp.preco * ip.quantidade) FROM itensPedidos ip JOIN tamanhosProdutos tp ON ip.produto_id = tp.produto_id WHERE ip.pedido_id = p.pedido_id)
+    WHERE p.pedido_id = NEW.pedido_id;
+END;
+//
+DELIMITER ;
+
+
+-- Atualizar Valor Total do Pedido ao Excluir Item em ItensPedidos
+DELIMITER //
+CREATE TRIGGER AfterDeleteItemItensPedidos
+AFTER DELETE ON itensPedidos
+FOR EACH ROW
+BEGIN
+    -- Atualizar o valor total do pedido ao excluir um item em itensPedidos
+    UPDATE pedidos AS p
+    SET p.valor_total = (SELECT SUM(tp.preco * ip.quantidade) FROM itensPedidos ip JOIN tamanhosProdutos tp ON ip.produto_id = tp.produto_id WHERE ip.pedido_id = p.pedido_id)
+    WHERE p.pedido_id = OLD.pedido_id;
+END;
+//
+DELIMITER ;
+
+-- Exclui item de itensPedidos caso excluido
+DELIMITER //
+CREATE TRIGGER AfterDeleteItemItensPedidos
+AFTER DELETE ON itensPedidos
+FOR EACH ROW
+BEGIN
+    -- Atualizar o status do pedido para 'Concluído' ao excluir o último item em itensPedidos
+    UPDATE pedidos AS p
+    SET p.status_pedido = 'Concluído'
+    WHERE p.pedido_id = OLD.pedido_id
+    AND NOT EXISTS (SELECT 1 FROM itensPedidos WHERE pedido_id = OLD.pedido_id);
+
+    -- Excluir o item dos itensPedidos caso seja o último item
+    DELETE FROM itensPedidos
+    WHERE pedido_id = OLD.pedido_id
+    AND NOT EXISTS (SELECT 1 FROM itensPedidos WHERE pedido_id = OLD.pedido_id);
+END;
+//
+DELIMITER ;
