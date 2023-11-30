@@ -13,6 +13,8 @@ ORDER BY
 
 -- Uma view que mostra um ranking dos metodos de pagamento.
 
+SELECT  * FROM RankingMetodosPagamento;
+
 
 -- 2 = Ranking de Pasteis Mais Vendidos:
 
@@ -31,6 +33,8 @@ ORDER BY
     TotalVendido DESC;
 
 -- Uma view que exibe um ranking dos produtos mais vendidos no estabelecimento.
+
+SELECT  * FROM RankingProdutosMaisVendidos;
 
 
 -- 3 = Histórico de Clientes:
@@ -51,6 +55,8 @@ FROM
 
 -- Uma view que fornece um histórico de pedidos para cada cliente.
 
+SELECT  * FROM HistoricoClientes;
+
 
 -- 4 = Menu:
 
@@ -61,6 +67,8 @@ FROM
     recheios;
 
 -- Uma view que mostra os possiveis recheios de pastel.
+
+SELECT  * FROM MenuDeRecheios;
 
 
 -- 5 = Resumo dos Pedidos:
@@ -81,9 +89,105 @@ GROUP BY
 
 -- Uma view que fornece um resumo dos pedidos.
 
+SELECT  * FROM ResumoPedidos;
+
+-- 6 = ClientesUltimosPedidos:
+
+CREATE VIEW ClientesUltimosPedidos AS
+SELECT
+    clientes.cliente_id,
+    clientes.nome_completo AS cliente_nome,
+    pedidos.pedido_id,
+    pedidos.data_pedido,
+    pedidos.forma_pagamento,
+    produtos.nome AS produto_nome,
+    itensPedidos.quantidade,
+    tamanhos.tamanho,
+    tamanhosProdutos.preco AS preco_unitario
+FROM clientes
+JOIN pedidos ON clientes.cliente_id = pedidos.cliente_id
+JOIN itensPedidos ON pedidos.pedido_id = itensPedidos.pedido_id
+JOIN produtos ON itensPedidos.produto_id = produtos.produto_id
+LEFT JOIN tamanhosProdutos ON produtos.produto_id = tamanhosProdutos.produto_id
+LEFT JOIN tamanhos ON tamanhosProdutos.tamanho_id = tamanhos.tamanho_id
+WHERE pedidos.data_pedido >= NOW() - INTERVAL 30 DAY;
+
+SELECT  * FROM ClientesUltimosPedidos;
+
+--  view que mostra a lista de clientes que fizeram pedidos nos últimos 30 dias.
+
+-- 7 = MediaGastoPorPedido
+
+CREATE VIEW MediaGastoPorPedido AS
+SELECT
+    pedidos.pedido_id,
+    pedidos.forma_pagamento,
+    tamanhos.tamanho,
+    AVG(tamanhosProdutos.preco * itensPedidos.quantidade) AS media_gasto
+FROM pedidos
+JOIN itensPedidos ON pedidos.pedido_id = itensPedidos.pedido_id
+JOIN tamanhosProdutos ON itensPedidos.produto_id = tamanhosProdutos.produto_id
+JOIN tamanhos ON tamanhosProdutos.tamanho_id = tamanhos.tamanho_id
+GROUP BY pedidos.pedido_id, pedidos.forma_pagamento, tamanhos.tamanho;
+
+SELECT  * FROM MediaGastoPorPedido;
+
+-- view que mostra a média de gasto por pedido.
+
+-- 8 = QuantidadeProdutoPorCategoria
+
+CREATE VIEW QuantidadeProdutoPorCategoria AS
+SELECT
+    categorias.categoria_id,
+    categorias.nome AS categoria_nome,
+    SUM(itensPedidos.quantidade) AS total_produtos_vendidos
+FROM categorias
+JOIN produtos ON categorias.categoria_id = produtos.categoria_id
+LEFT JOIN itensPedidos ON produtos.produto_id = itensPedidos.produto_id
+GROUP BY categorias.categoria_id;
+
+SELECT  * FROM QuantidadeProdutoPorCategoria;
+
+-- view que mostra a quantidade total de produtos vendidos em cada categoria.
+
+-- 9 = FaturamentoMensal
+
+CREATE VIEW FaturamentoMensal AS
+SELECT
+    DATE_FORMAT(pedidos.data_pedido, '%Y-%m') AS mes,
+    SUM(tamanhosProdutos.preco * itensPedidos.quantidade) AS faturamento_total
+FROM pedidos
+JOIN itensPedidos ON pedidos.pedido_id = itensPedidos.pedido_id
+JOIN tamanhosProdutos ON itensPedidos.produto_id = tamanhosProdutos.produto_id
+GROUP BY mes;
+
+SELECT  * FROM FaturamentoMensal;
+
+-- view que mostra a evolução mensal do faturamento total da sua loja.
+
+-- 10 = QuantidadeProdutosPorClienteCategoria
+
+CREATE VIEW QuantidadeProdutosPorClienteCategoria AS
+SELECT
+    clientes.cliente_id,
+    clientes.nome_completo AS cliente_nome,
+    categorias.categoria_id,
+    categorias.nome AS categoria_nome,
+    SUM(itensPedidos.quantidade) AS total_produtos_vendidos
+FROM clientes
+JOIN pedidos ON clientes.cliente_id = pedidos.cliente_id
+JOIN itensPedidos ON pedidos.pedido_id = itensPedidos.pedido_id
+JOIN produtos ON itensPedidos.produto_id = produtos.produto_id
+JOIN categorias ON produtos.categoria_id = categorias.categoria_id
+GROUP BY clientes.cliente_id, categorias.categoria_id;
+
+SELECT  * FROM QuantidadeProdutosPorClienteCategoria;
+
+-- view que mostra a quantidade total de produtos vendidos para cliente em cada categoria
+
 #------------------------------
 
--- Lista os Pasteis Vendidos por Tamanho
+-- 11 = Lista os Pasteis Vendidos por Tamanho
 CREATE VIEW PasteisVendidosPorTamanho AS
 SELECT
     t.tamanho,
@@ -99,7 +203,7 @@ SELECT *
 FROM PasteisVendidosPorTamanho;
 
 
--- Pedidos Realizados no Último Mês
+-- 12 = Pedidos Realizados no Último Mês
 CREATE VIEW PedidosUltimoMes AS
 SELECT
     pedido_id,
@@ -113,7 +217,7 @@ WHERE
 SELECT *
 FROM PedidosUltimoMes;
 
--- Pasteis sem Pedidos
+-- 13 = Pasteis sem Pedidos
 CREATE VIEW PasteisSemPedidos AS
 SELECT
     p.produto_id,
@@ -128,7 +232,7 @@ WHERE
 SELECT *
 FROM PasteisSemPedidos;
 
--- Pedidos por Dia da Semana
+-- 14 = Pedidos por Dia da Semana
 CREATE VIEW PedidosPorDiaSemana AS
 SELECT
     DAYNAME(data_pedido) AS DiaSemana,
@@ -142,7 +246,7 @@ GROUP BY
 SELECT *
 FROM PedidosPorDiaSemana;
 
--- Quantidade de Clientes Maiores e Menores de 18 Anos
+-- 15 = Quantidade de Clientes Maiores e Menores de 18 Anos
 CREATE VIEW ClientesMaioresMenores18 AS
 SELECT
     SUM(CASE WHEN YEAR(NOW()) - YEAR(data_nascimento) >= 18 THEN 1 ELSE 0 END) AS QuantidadeMaiores18,

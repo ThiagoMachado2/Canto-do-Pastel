@@ -15,7 +15,8 @@ CREATE PROCEDURE InserirCliente(
 )
 BEGIN
     DECLARE cliente_id INT;
-
+	
+    START TRANSACTION;
     -- Inserir em clientes
     INSERT INTO clientes (nome_completo, nome_chamado, cpf, data_nascimento, telefone, email)
     VALUES (nome_completo, nome_chamado, cpf, data_nascimento, telefone, email);
@@ -26,6 +27,7 @@ BEGIN
     -- Inserir em enderecos
     INSERT INTO enderecos (cliente_id, bairro, numero, rua, cidade, estado)
     VALUES (cliente_id, bairro, numero, rua, cidade, estado);
+    COMMIT;
 END //
 
 DELIMITER ;
@@ -53,6 +55,7 @@ CREATE PROCEDURE FazerPedido(IN idCliente INT, IN idProduto INT, IN formaPagamen
 BEGIN
     DECLARE idPedido INT;
 
+    START TRANSACTION;
     -- Inserir em pedidos
     INSERT INTO pedidos (cliente_id, forma_pagamento) VALUES (idCliente, formaPagamento);
     SET idPedido = LAST_INSERT_ID();
@@ -61,6 +64,7 @@ BEGIN
     INSERT INTO itensPedidos (pedido_id, produto_id, quantidade) VALUES (idPedido, idProduto, 1);
 
     SELECT * FROM pedidos WHERE pedido_id = idPedido;
+    COMMIT;
 END //
 
 DELIMITER ;
