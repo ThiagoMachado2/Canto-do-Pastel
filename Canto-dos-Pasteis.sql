@@ -98,7 +98,11 @@ VALUES
 	('Maria Oliveira', 'Maria', '987.654.321-09', '1985-12-10', '(21) 99876-5432', 'maria.oliveira@email.com'),
 	('Carlos Santos', 'Carlos', '345.678.901-23', '1998-08-22', '(31) 91234-5678', 'carlos.santos@email.com'),
     ('Fernanda Pereira', 'Fernanda', '567.890.123-45', '1995-02-28', '(41) 87654-3210', 'fernanda.pereira@email.com'),
-    ('Ricardo Oliveira', 'Ricardo', '789.012.345-67', '1980-11-05', '(51) 76543-2109', 'ricardo.oliveira@email.com');
+    ('Ricardo Oliveira', 'Ricardo', '789.012.345-67', '1980-11-05', '(51) 76543-2109', 'ricardo.oliveira@email.com'),
+    ('Ana Lima', 'Ana', '012.345.678-90', '1992-08-18', '(12) 98765-4321', 'ana.lima@email.com'),
+    ('Lucas Santos', 'Lucas', '234.567.890-12', '1987-03-25', '(22) 99876-5432', 'lucas.santos@email.com'),
+    ('Julia Pereira', 'Julia', '456.789.012-34', '1996-12-05', '(32) 91234-5678', 'julia.pereira@email.com');
+
     
     SELECT * FROM clientes;
 
@@ -109,7 +113,10 @@ VALUES
     (2, 'Vila Madalena', '456', 'Rua B', 'São Paulo', 'SP'),
     (3, 'Itaim Bibi', '789', 'Rua C', 'São Paulo', 'SP'),
     (4, 'Jardins', '101', 'Avenida X', 'São Paulo', 'SP'),
-    (5, 'Boa Viagem', '567', 'Rua Y', 'Recife', 'PE');
+    (5, 'Boa Viagem', '567', 'Rua Y', 'Recife', 'PE'),
+	(6, 'Feira X', '345', 'Rua D', 'Feira de Santana', 'BA'),
+    (7, 'Muchila', '678', 'Rua E', 'Feira de Santana', 'BA'),
+    (8, 'Getúlio Vargas', '910', 'Rua F', 'Feira de Santana', 'BA');
     
     SELECT * FROM enderecos;
 
@@ -145,7 +152,23 @@ VALUES
     (1, 'Pastel de Queijo com Presunto'),
     (2, 'Pastel Vegano de Tofu'),
     (3, 'Pastel Vegetariano de Abobrinha com Ricota'),
-	(1, 'Pastel Personalizado');
+	(1, 'Pastel Personalizado'),
+	(1, 'Pastel de Carne com Bacon'),
+    (2, 'Pastel Vegano de Batata Doce'),
+    (3, 'Pastel Vegetariano de Brócolis'),
+    (4, 'Pastel Sem Lactose de Peito de Peru'),
+    (5, 'Cerveja'),
+    (5, 'Café'),
+    (5, 'Chá'),
+    (1, 'Pastel de Frango com Catupiry'),
+    (2, 'Pastel Vegano de Beterraba'),
+    (3, 'Pastel Vegetariano de Pimentão'),
+    (4, 'Pastel Sem Lactose de Salmão'),
+    (1, 'Pastel de Carne com Queijo'),
+    (1, 'Pastel de Frango com Milho'),
+    (2, 'Pastel Vegano de Abacate'),
+    (3, 'Pastel Vegetariano de Aspargos');
+
     
     SELECT * FROM produtos;
     
@@ -184,7 +207,19 @@ VALUES
     (14, 2, 7.00),
 	(15, 1, 5.00),
 	(15, 2, 7.00),
-    (15, 3, 9.00);
+    (15, 3, 9.00),
+	(16, 1, 7.50),
+    (17, 2, 8.00),
+    (18, 3, 9.00),
+    (19, 1, 7.00),
+    (20, 2, 8.50),
+    (21, 3, 10.00),
+    (22, 1, 6.50),
+    (23, 2, 7.50),
+    (24, 3, 9.50),
+    (25, 1, 8.00),
+    (26, 2, 9.00),
+    (27, 3, 10.50);
     
     SELECT * FROM tamanhosProdutos;
 
@@ -192,10 +227,10 @@ VALUES
 -- Inserir dados na tabela 'recheios'
 INSERT INTO recheios (recheio)
 VALUES 
-	('Bacon'),
-	('Queijo'),
-	('Frango'),
-	('Espinafre'),
+    ('Bacon'),
+    ('Queijo'),
+    ('Frango'),
+    ('Espinafre'),
     ('Calabresa'),
     ('Chocolate'),
     ('Presunto'),
@@ -203,8 +238,18 @@ VALUES
     ('Cogumelos'),
     ('Tofu'),
     ('Palmito'),
-    ('Abobrinha');
-
+    ('Abobrinha'),
+    ('Batata Doce'),
+    ('Brócolis'),
+    ('Peito de Peru'),
+    ('Salmão'),
+    ('Catupiry'),
+    ('Beterraba'),
+    ('Pimentão'),
+    ('Milho'),
+    ('Abacate'),
+    ('Aspargos');
+    
     SELECT * FROM recheios;
 
 
@@ -235,7 +280,33 @@ VALUES
 	(15, 3),
 	(15, 4),
 	(15, 9),
-	(15, 10);
+	(15, 10),
+	(16, 1),
+    (16, 2),
+    (17, 4),
+    (18, 3),
+    (18, 5),
+    (19, 6),
+    (19, 7),
+    (19, 8),
+    (20, 9),
+    (20, 10),
+    (21, 11),
+    (21, 12),
+    (22, 2),
+    (22, 3),
+    (23, 4),
+    (23, 9),
+    (24, 10),
+    (24, 11),
+    (25, 2),
+    (25, 3),
+    (26, 4),
+    (26, 13),
+    (27, 14),
+    (27, 15),
+    (27, 16),
+    (27, 21);
     
     SELECT * FROM recheiosProdutos;
 
@@ -256,7 +327,21 @@ VALUES
     (1, 'D'),
     (2, 'PIX'),
     (3, 'CC'),
-    (1, 'PIX');
+    (1, 'PIX'),
+	(6, 'CC'),
+    (7, 'PIX'),
+    (8, 'D'),
+    (6, 'CC'),
+    (7, 'PIX'),
+    (6, 'PIX'),
+    (4, 'D'),
+    (1, 'CC'),
+    (8, 'PIX'),
+    (6, 'D'),
+    (7, 'PIX'),
+    (8, 'CC'),
+    (6, 'PIX'),
+    (5, 'CD');
     
     SELECT * FROM pedidos;
 
@@ -282,7 +367,22 @@ VALUES
    (10, 12, 1),
    (11, 13, 3),
    (12, 14, 2),
-   (13, 15, 2);
+   (13, 15, 2),
+   (14, 16, 2),
+   (14, 17, 1),
+   (15, 18, 3),
+   (16, 19, 2),
+   (17, 16, 1),
+   (17, 20, 1),
+   (18, 17, 2),
+   (18, 20, 1),
+   (19, 21, 3),
+   (20, 22, 2),
+   (21, 23, 1),
+   (21, 24, 2),
+   (22, 25, 2),
+   (23, 26, 1),
+   (24, 27, 3);
    
     SELECT * FROM itensPedidos;
     
@@ -348,4 +448,4 @@ GROUP BY p.nome
 ORDER BY quantidade_vendas ASC;
 
 
-
+DROP DATABASE Canto_dos_Pasteis;
