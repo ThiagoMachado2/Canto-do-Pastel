@@ -10,6 +10,7 @@ BEGIN
     SET ip.valor_total = (SELECT tp.preco * ip.quantidade FROM tamanhosProdutos tp WHERE tp.produto_id = ip.produto_id);
 END;
 //
+
 DELIMITER ;
 
 -- Este trigger atualizará o preço total dos itens de pedidos sempre que o preço de um produto for atualizado.
@@ -31,39 +32,29 @@ DELIMITER ;
 -- Este trigger excluirá automaticamente os pedidos de um cliente quando o cliente for removido do sistema.
 
 
--- 3 = Trigger para liberar ingredientes quando houver um pedido cancelado
+-- 3 = Trigger para atualizar os itens pra novas categorias caso tenham sido deletadas
 
 DELIMITER //
-CREATE TRIGGER BeforeDeletePedidoLiberaIngredientes
-BEFORE DELETE ON pedidos
+CREATE TRIGGER BeforeDeleteCategoriaAtualizaProdutos
+BEFORE DELETE ON categorias
 FOR EACH ROW
 BEGIN
-    -- Liberar os ingredientes associados aos itens do pedido
-    DECLARE produto_id_temp INT;
-    DECLARE quantidade_temp INT;
+    DECLARE categoria_padrao_id INT;
 
-    -- Cursor para obter os itens do pedido que serão excluídos
-    DECLARE cursor_itens_pedido CURSOR FOR
-        SELECT ip.produto_id, ip.quantidade
-        FROM itensPedidos ip
-        WHERE ip.pedido_id = OLD.pedido_id;
+    -- Encontrar o ID da categoria padrão (ou outra categoria desejada)
+    SELECT categoria_id INTO categoria_padrao_id
+    FROM categorias
+    WHERE nome = 'Outros Produtos';
 
-    -- Loop através dos itens do pedido
-    OPEN cursor_itens_pedido;
-    read_loop: LOOP
-        FETCH cursor_itens_pedido INTO produto_id_temp, quantidade_temp;
-        IF quantity_temp IS NULL THEN
-            LEAVE read_loop;
-        END IF;
-
-        -- Atualizar a quantidade disponível de ingredientes no estoque
-        UPDATE ingredientes i
-        SET i.quantidade_disponivel = i.quantidade_disponivel + quantidade_temp
-        WHERE i.produto_id = produto_id_temp;
-    END LOOP;
-    CLOSE cursor_itens_pedido;
+    -- Atualizar os produtos pertencentes à categoria sendo deletada
+    UPDATE produtos
+    SET categoria_id = categoria_padrao_id
+    WHERE categoria_id = OLD.categoria_id;
 END;
 //
 DELIMITER ;
 
--- Este trigger liberará automaticamente os ingredientes de um pedido caso ele seja cancelado
+
+-- Este trigger atualizara os itens para novas categorias quando deletadas
+
+
