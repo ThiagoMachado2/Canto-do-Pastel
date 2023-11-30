@@ -1,5 +1,4 @@
 -- 1 = Trigger para Atualizar Preço Total de ItensPedidos após Atualização de Produto:
-
 DELIMITER //
 CREATE TRIGGER AfterUpdateProduto
 AFTER UPDATE ON produtos
@@ -14,6 +13,20 @@ END;
 DELIMITER ;
 -- Este trigger atualizará o preço total dos itens de pedidos sempre que o preço de um produto for atualizado.
 
+-- Inserir produto e item de pedido associado
+INSERT INTO produtos (nome, categoria_id) VALUES ('Pastel de Queijo', 1);
+INSERT INTO tamanhosProdutos (produto_id, tamanho_id, preco) VALUES (1, 1, 5.00);
+INSERT INTO clientes (nome_completo) VALUES ('João Silva');
+INSERT INTO pedidos (cliente_id) VALUES (1);
+INSERT INTO itensPedidos (pedido_id, produto_id, quantidade) VALUES (1, 1, 2);
+
+-- Atualizar preço do produto
+UPDATE produtos SET preco = 6.00 WHERE produto_id = 1;
+
+-- Verificar se o valor total do item de pedido foi atualizado corretamente
+SELECT valor_total FROM itensPedidos WHERE pedido_id = 1;
+
+#-------------
 
 -- Inserir produto e item de pedido associado
 INSERT INTO produtos (nome, categoria_id) VALUES ('Pastel de Queijo', 1);
@@ -32,7 +45,6 @@ SELECT valor_total FROM itensPedidos WHERE pedido_id = 1;
 
 
 -- 2 = Trigger para Excluir Pedidos de um Cliente ao Excluir o Cliente:
-
 DELIMITER //
 CREATE TRIGGER BeforeDeleteCliente
 BEFORE DELETE ON clientes
@@ -59,8 +71,14 @@ SELECT * FROM pedidos WHERE cliente_id = 2;
 #-------------
 
 
--- 3 = Trigger para atualizar os itens pra novas categorias caso tenham sido deletadas
+-- Excluir cliente (deve acionar o trigger e excluir o pedido associado)
+DELETE FROM clientes WHERE cliente_id = 2;
 
+-- Verificar se o pedido foi excluído corretamente
+SELECT * FROM pedidos WHERE cliente_id = 2;
+
+#---------------------------
+-- 3 = Trigger para atualizar os itens pra novas categorias caso tenham sido deletadas
 DELIMITER //
 CREATE TRIGGER BeforeDeleteCategoriaAtualizaProdutos
 BEFORE DELETE ON categorias
@@ -80,7 +98,6 @@ BEGIN
 END;
 //
 DELIMITER ;
-
 
 -- Este trigger atualizara os itens para novas categorias quando deletadas
 
@@ -126,7 +143,6 @@ UPDATE itensPedidos SET quantidade = 5 WHERE pedido_id = 3;
 SELECT valor_total FROM pedidos WHERE pedido_id = 3;
 
 #--------------------
-
 
 -- 5 Atualizar Valor Total do Pedido ao Excluir Item em ItensPedidos
 DELIMITER //
@@ -193,4 +209,3 @@ DELETE FROM itensPedidos WHERE pedido_id = 5;
 
 -- Verificar se o status do pedido foi atualizado corretamente
 SELECT status_pedido FROM pedidos WHERE pedido_id = 5;
-
