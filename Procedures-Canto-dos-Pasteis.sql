@@ -47,6 +47,8 @@ CALL InserirCliente(
     'SP'
 );
 
+SELECT * FROM clientes;
+
 
 DELIMITER //
 
@@ -103,5 +105,3 @@ DELIMITER ;
 CALL ObterDetalhesPedido(3);
 
 
-
-DROP PROCEDURE IF EXISTS ObterDetalhesPedido;
