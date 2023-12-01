@@ -448,4 +448,4 @@ GROUP BY p.nome
 ORDER BY quantidade_vendas ASC;
 
 
-DROP DATABASE Canto_dos_Pasteis;
+
